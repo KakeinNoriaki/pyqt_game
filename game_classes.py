@@ -1,16 +1,24 @@
 class Player:
-    def __init__(self, hp, mp, wp, ar=None, arteff=None, pt):
+    def __init__(self, hp, mp, wp, pt, ar=None, art_ef=None):
         self.hit_point_max = 100
         self.hit_point = hp
         self.mana_point_max = 100
         self.mana_point = mp
         self.weapon_in_hands = wp
-        self.weapon_inventory = [wp]
         self.armor = ar
-        self.artefact_effect = arteff
-        self.in_defence = False # если True то срезает урон по герою на 90%
-        self.potion = pt
+        self.artefact_effect = art_ef
+        self.in_defence = False  # если True то срезает урон по герою на 90%
+        self.potion = None
         self.potion_effect = None
+        self.armor_plus_stats()
+        self.get_drink(pt)
+
+    def armor_plus_stats(self):
+        if self.armor is not None:
+            self.hit_point_max += self.armor.plus_hit_point
+            self.hit_point += self.armor.plus_hit_point
+            self.mana_point_max += self.armor.plus_mana_point
+            self.mana_point += self.armor.plus_mana_point
 
     def alive(self):
         if self.hit_point > 0:
@@ -18,7 +26,7 @@ class Player:
         return False
 
     def attack(self, target):
-        block = 0 # срезает урон если враг в защитной стойке НА 70%
+        block = 0  # срезает урон если враг в защитной стойке НА 70%
         if target.in_defence:
             block = (self.weapon_in_hands.damage / 100) * 70
         self.in_defence = False
@@ -35,38 +43,44 @@ class Player:
         if self.mana_point > self.mana_point_max:
             self.mana_point = self.mana_point_max
 
-    def drink_potion(self): # при выпивании зелья игрок встаёт в защитную стойку
+    def drink_potion(self):  # при выпивании зелья игрок встаёт в защитную стойку
         if self.potion is not None:
-            self.hit_point += self.potion.hit_point_heall
+            self.hit_point += self.potion.hit_point_heal
             if self.hit_point > self.hit_point_max:
                 self.hit_point = self.hit_point_max
+            self.mana_point += self.potion.mana_point_heal
+            if self.mana_point > self.hit_point_max:
+                self.mana_point = self.mana_point_max
             if self.potion.effect is not None:
                 self.potion_effect = self.potion.effect
             self.potion = None
             self.in_defence = True
+            if self.potion.effect is not None:
+                self.potion_effect = self.potion.effect
 
-    def change_weapon(self):
-        if len(self.weapon_inventory) > 1:
-            if self.weapon_inventory.index(self.weapon_in_hands) == 3:
-                self.weapon_in_hands = self.weapon_inventory[self.weapon_inventory.
-                                                                 index(self.weapon_in_hands) - 1]
-            else:
-                self.weapon_in_hands = self.weapon_inventory[self.weapon_inventory.
-                                                                 index(self.weapon_in_hands) + 1]
+    def change_weapon(self, new_wp):
+        self.weapon_in_hands = new_wp
 
     def get_drink(self, pt):
         self.potion = pt
         self.potion_effect = None
+
+    def put_armour(self, new_armor):
+        self.hit_point_max -= self.armor.plus_hit_point
+        self.mana_point_max -= self.armor.plus_mana_point
+        self.armor = new_armor
+        self.armor_plus_stats()
+
 
 class Enemy:
     def __init__(self, nm, hp, pt, dm, btn):
         self.name = nm
         self.hit_points = hp
         self.damage = dm
-        self.pattern = pt # attack, defense, heal
+        self.pattern = pt  # attack, defense, heal
         self.next_move = 0
         self.button = btn
-        self.effect = Nonem
+        self.effect = None
         self.in_defence = False
 
     def alive(self):
@@ -101,16 +115,18 @@ class Enemy:
     def move(self):
         if self.pattern[self.next_move] == 'attack':
             self.attack(hero)
-
         if self.pattern[self.next_move] == 'heal':
             self.heal()
-
         if self.pattern[self.next_move] == 'defence':
             self.defence()
+        if self.next_move == len(self.pattern) - 1:
+            self.next_move = 0
+        else:
+            self.next_move += 1
 
 
 class Weapon:
-    def __init__(self, nm, dm, mpu=0, eff):
+    def __init__(self, nm, dm, eff, mpu=0):
         self.name = nm
         self.damage = dm
         self.mana_points_use = mpu
@@ -132,13 +148,15 @@ class Artefact:
 
 
 class Potion:
-    def __init__(self, nm, hph, ef):
+    def __init__(self, nm, hph, mph, ef):
         self.name = nm
-        self.hit_point_heall = hph
+        self.hit_point_heal = hph
+        self.mana_point_heal = mph
         self.effect = ef
 
 
 hero = Player()
+potion = Potion()
 enemy_1 = Enemy()
 enemy_2 = Enemy()
 enemy_3 = Enemy()
