@@ -1,17 +1,24 @@
+import sys
+
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QMainWindow
+
+
 class Player:
-    def __init__(self, hp, mp, wp, pt, ar=None, art_ef=None):
+    def __init__(self, hp, mp, wp, pt, arm=None):
         self.hit_point_max = 100
         self.hit_point = hp
         self.mana_point_max = 100
         self.mana_point = mp
         self.weapon_in_hands = wp
-        self.armor = ar
-        self.artefact_effect = art_ef
+        self.armor = arm
         self.in_defence = False  # если True то срезает урон по герою на 90%
         self.potion = None
-        self.potion_effect = None
+        self.artefact = None
+        self.damage = self.weapon_in_hands.damage
         self.armor_plus_stats()
         self.get_drink(pt)
+        self.artefact_plus_stats()
 
     def armor_plus_stats(self):
         if self.armor is not None:
@@ -20,9 +27,13 @@ class Player:
             self.mana_point_max += self.armor.plus_mana_point
             self.mana_point += self.armor.plus_mana_point
 
+    def artefact_plus_stats(self):
+        self.damage += self.artefact.plus_damage
+
     def alive(self):
         if self.hit_point > 0:
             return True
+        print('ИГРА ОКОНЧЕНА!')
         return False
 
     def attack(self, target):
@@ -34,16 +45,22 @@ class Player:
             if self.mana_point - self.weapon_in_hands.mana_points_use >= 0:
                 target.hit_points -= self.weapon_in_hands.damage - block
                 self.mana_point -= self.weapon_in_hands.mana_points_use
-                if self.weapon_in_hands.effect is not None:
-                    target.effect = self.weapon_in_hands.effect
+                print('Вы нанесли урон врагу ' + target.name + ' в размере: '
+                      + str(self.weapon_in_hands.damage + block) + '\nУ врага осталось '
+                      + str(target.hit_points) + ' здоровья')
+            else:
+                print('мало маны')
+        else:
+            print('Враг ' + target.name + ' умер')
 
-    def deffence(self):
+    def defence(self):
         self.in_defence = True
+        print('Вы встали в защитную стойку')
         self.mana_point += 10
         if self.mana_point > self.mana_point_max:
             self.mana_point = self.mana_point_max
 
-    def drink_potion(self):  # при выпивании зелья игрок встаёт в защитную стойку
+    def drink_potion(self):  # при выпивании зелья игрок встаёт в защитную стойку но без прибавке к мане
         if self.potion is not None:
             self.hit_point += self.potion.hit_point_heal
             if self.hit_point > self.hit_point_max:
@@ -51,21 +68,28 @@ class Player:
             self.mana_point += self.potion.mana_point_heal
             if self.mana_point > self.hit_point_max:
                 self.mana_point = self.mana_point_max
-            if self.potion.effect is not None:
-                self.potion_effect = self.potion.effect
             self.potion = None
             self.in_defence = True
-            if self.potion.effect is not None:
-                self.potion_effect = self.potion.effect
+            print('Вы выпили зелье теперь у вас ' + str(self.hit_point)
+                  + ' здоровья и ' + str(self.mana_point) + ' маны')
+        else:
+            print('У вас не зелья')
 
     def change_weapon(self, new_wp):
         self.weapon_in_hands = new_wp
 
+    def change_artefact(self, new_art):
+        print('Вы сменили артефакт ' + self.artefact.name + ' на ' + new_art.name)
+        self.artefact = new_art
+        self.artefact_plus_stats()
+
     def get_drink(self, pt):
         self.potion = pt
-        self.potion_effect = None
+        print('Вы получили новое зелье ' + self.potion.name)
+        print(self.potion)
 
-    def put_armour(self, new_armor):
+    def put_armor(self, new_armor):
+        print('Теперь на вас надета ' + new_armor.name)
         self.hit_point_max -= self.armor.plus_hit_point
         self.mana_point_max -= self.armor.plus_mana_point
         self.armor = new_armor
@@ -80,7 +104,6 @@ class Enemy:
         self.pattern = pt  # attack, defense, heal
         self.next_move = 0
         self.button = btn
-        self.effect = None
         self.in_defence = False
 
     def alive(self):
@@ -93,11 +116,11 @@ class Enemy:
         block = 0  # срезает урон если враг в защитной стойке НА 90%
         if target.in_defence:
             block = (self.damage / 100) * 90
-        self.in_defence = False
         if target.alive:
             target.hit_points -= self.damage - block
+            print('Враг ' + self.name + ' нанёс урон в размере ' + str(self.damage - block) + ' вам')
         else:
-            print('чё за фигня?')
+            print('Игра окончена')
 
     def heal(self):
         self.in_defence = False
@@ -108,9 +131,11 @@ class Enemy:
                 min_hp = i.hit_points
                 heal_him = enemy_list.index(i)
         enemy_list[heal_him].hit_points += self.damage
+        print('Враг ' + self.name + ' выличил ' + enemy_list[heal_him].name)
 
     def defence(self):
         self.in_defence = True
+        print('Враг ' + self.name + ' встал в защитную стойку')
 
     def move(self):
         if self.pattern[self.next_move] == 'attack':
@@ -126,11 +151,14 @@ class Enemy:
 
 
 class Weapon:
-    def __init__(self, nm, dm, eff, mpu=0):
+    def __init__(self, nm, dm, mpu=0):
         self.name = nm
         self.damage = dm
         self.mana_points_use = mpu
-        self.effect = eff
+
+    def __str__(self):
+        return 'Оружие ' + self.name + ' наносит ' + str(self.damage) +\
+               ' урона используя ' + str(self.mana_points_use) + ' маны'
 
 
 class Armor:
@@ -139,21 +167,36 @@ class Armor:
         self.plus_hit_point = php
         self.plus_mana_point = pmp
 
+    def __str__(self):
+        return self.name + ' прибавляет ' + str(self.plus_hit_point) + ' и ' + str(self.plus_mana_point)
+
 
 class Artefact:
-    def __init__(self, nm, pd, ef):
+    def __init__(self, nm, pd):
         self.name = nm
         self.plus_damage = pd
-        self.effect = ef
+
+    def __str__(self):
+        return 'Артефакт ' + self.name + ' прибавляет ' + str(self.plus_damage)
 
 
 class Potion:
-    def __init__(self, nm, hph, mph, ef):
+    def __init__(self, nm, hph, mph):
         self.name = nm
         self.hit_point_heal = hph
         self.mana_point_heal = mph
-        self.effect = ef
 
+    def __str__(self):
+        return 'Зелье ' + self.name + ' востонавливает ' + str(self.hit_point_heal)\
+               + ' здоровья ' + str(self.mana_point_heal) + ' мана'
+
+
+class MyWidget(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('game_ui_disign', self)
+
+    
 
 hero = Player()
 potion = Potion()
