@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>899</width>
-    <height>600</height>
+    <width>976</width>
+    <height>570</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,13 +19,40 @@
      <rect>
       <x>10</x>
       <y>430</y>
-      <width>521</width>
-      <height>111</height>
+      <width>511</width>
+      <height>121</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_2">
+    <layout class="QGridLayout" name="move_buttons">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_heal">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Выпить зелье</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButton_attack">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Атака</string>
+       </property>
+      </widget>
+     </item>
      <item row="0" column="1">
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="pushButton_block">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -38,6 +65,9 @@
      </item>
      <item row="1" column="1">
       <widget class="QPushButton" name="pushButton">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -48,30 +78,6 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QPushButton" name="pushButton_3">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Атака</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QPushButton" name="pushButton_4">
-       <property name="font">
-        <font>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Выпить зелье</string>
-       </property>
-      </widget>
-     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="gridLayoutWidget_2">
@@ -79,13 +85,13 @@
      <rect>
       <x>540</x>
       <y>430</y>
-      <width>351</width>
+      <width>421</width>
       <height>111</height>
      </rect>
     </property>
-    <layout class="QGridLayout" name="gridLayout_3">
+    <layout class="QGridLayout" name="stats">
      <item row="1" column="0">
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="label_mp">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -97,7 +103,7 @@
       </widget>
      </item>
      <item row="0" column="0">
-      <widget class="QLabel" name="label_2">
+      <widget class="QLabel" name="label_hp">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -109,7 +115,7 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLabel" name="label_3">
+      <widget class="QLabel" name="label_art">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -121,7 +127,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLabel" name="label_4">
+      <widget class="QLabel" name="label_arm">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -133,19 +139,19 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel" name="label_5">
+      <widget class="QLabel" name="label_lvl">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Выносливость:</string>
+        <string>Уровень:</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLabel" name="label_6">
+      <widget class="QLabel" name="label_wp">
        <property name="font">
         <font>
          <pointsize>14</pointsize>
@@ -158,7 +164,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="label_log">
     <property name="geometry">
      <rect>
       <x>550</x>
@@ -179,23 +185,23 @@
      <string>                 ЛОГ</string>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="textBrowser">
+   <widget class="QTextBrowser" name="log">
     <property name="geometry">
      <rect>
-      <x>545</x>
-      <y>41</y>
-      <width>341</width>
+      <x>540</x>
+      <y>40</y>
+      <width>421</width>
       <height>381</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="label_fon">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>10</y>
       <width>511</width>
-      <height>81</height>
+      <height>111</height>
      </rect>
     </property>
     <property name="font">
@@ -207,53 +213,13 @@
      <string>         Фоновая картинка</string>
     </property>
    </widget>
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="QLabel" name="label_im_pl">
     <property name="geometry">
      <rect>
-      <x>379</x>
+      <x>20</x>
       <y>130</y>
-      <width>131</width>
-      <height>271</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>Картинка врага</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_12">
-       <property name="text">
-        <string>Картинка врага</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_11">
-       <property name="text">
-        <string>Картинка врага</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_10">
-       <property name="text">
-        <string>Картинка врага</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-   <widget class="QLabel" name="label_13">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>170</y>
       <width>171</width>
-      <height>151</height>
+      <height>231</height>
      </rect>
     </property>
     <property name="font">
@@ -265,13 +231,112 @@
      <string>Картинка игрока</string>
     </property>
    </widget>
+   <widget class="QWidget" name="gridLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>310</y>
+      <width>221</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="attack">
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_attack_3">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Аткавать 3</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QPushButton" name="pushButton_attack_2">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Атаковать 2</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButton_back">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Назад</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QPushButton" name="pushButton_attack_1">
+       <property name="font">
+        <font>
+         <pointsize>14</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Атковать 1</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_en1_im">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>130</y>
+      <width>141</width>
+      <height>141</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Картинка врага</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_en2_im">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>260</y>
+      <width>131</width>
+      <height>132</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Картинка врага</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_en3_im">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>170</y>
+      <width>129</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Картинка врага</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>899</width>
+     <width>976</width>
      <height>21</height>
     </rect>
    </property>

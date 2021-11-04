@@ -1,11 +1,13 @@
 import sys
-
+from PyQt5.QtWidgets import (QWidget, QHBoxLayout, QLabel, QApplication, QMainWindow)
+from PyQt5.QtGui import QPixmap
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QMainWindow
 
 
 class Player:
     def __init__(self, hp, mp, wp, pt, arm=None):
+        global hero
+        global enemy_list
         self.hit_point_max = 100
         self.hit_point = hp
         self.mana_point_max = 100
@@ -98,6 +100,8 @@ class Player:
 
 class Enemy:
     def __init__(self, nm, hp, pt, dm, btn):
+        global hero
+        global enemy_list
         self.name = nm
         self.hit_points = hp
         self.damage = dm
@@ -194,13 +198,64 @@ class Potion:
 class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('game_ui_disign', self)
+        uic.loadUi('game_ui_disign.ui', self)
+        self.initUI()
+        global hero
+        global enemy_list
 
-    
+    def initUI(self):
+        pixmap_hero = QPixmap("ёлка.png")
+        self.label_im_pl.setPixmap(pixmap_hero)
+        pixmap_fon = QPixmap('фон.jpg')
+        self.label_fon.setPixmap(pixmap_fon)
+        self.attack_cancel()
+        self.pushButton_attack_1.clicked.connect(self.btn_attack_1)
+        self.pushButton_attack_2.clicked.connect(self.btn_attack_2)
+        self.pushButton_attack_3.clicked.connect(self.btn_attack_3)
+        self.pushButton_back.clicked.connect(self.attack_cancel)
+        self.pushButton_attack.clicked.connect(self.hero_attack)
+        self.pushButton_block.clicked.connect(self.hero_defence)
+        self.pushButton_heal.clicked.connect(self.hero_drink_potion)
 
-hero = Player()
-potion = Potion()
-enemy_1 = Enemy()
-enemy_2 = Enemy()
-enemy_3 = Enemy()
-enemy_list = [enemy_1, enemy_2, enemy_3]
+    def hero_attack(self):
+        self.show_attack_buttons()
+
+    def attack_cancel(self):
+        self.pushButton_attack_1.hide()
+        self.pushButton_attack_2.hide()
+        self.pushButton_attack_3.hide()
+        self.pushButton_back.hide()
+
+    def show_attack_buttons(self):
+        self.pushButton_attack_1.show()
+        self.pushButton_attack_2.show()
+        self.pushButton_attack_3.show()
+        self.pushButton_back.show()
+
+    def hero_defence(self):
+        hero.defence()
+
+    def hero_drink_potion(self):
+        hero.drink_potion()
+
+    def btn_attack_1(self):
+        hero.attack(enemy_list[0])
+
+    def btn_attack_2(self):
+        hero.attack(enemy_list[1])
+
+    def btn_attack_3(self):
+        hero.attack(enemy_list[2])
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    ex = MyWidget()
+    ex.show()
+    sys.exit(app.exec())
+    hero = Player()
+    potion = Potion()
+    enemy_1 = Enemy()
+    enemy_2 = Enemy()
+    enemy_3 = Enemy()
+    enemy_list = [enemy_1, enemy_2, enemy_3]
